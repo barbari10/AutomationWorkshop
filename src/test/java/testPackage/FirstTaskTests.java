@@ -10,7 +10,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
-public class firstTask {
+public class FirstTaskTests {
 
     @Test
     public void addToCart() {

@@ -1,30 +1,32 @@
 package testPackage;
 
+import io.opentelemetry.semconv.ResourceAttributes;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+
+import javax.swing.*;
 import java.time.Duration;
 
 
-public class WorkshopTests {
-        WebDriver driver;
-        //Wait<WebDriver> wait;
+@Test public class WorkshopTests {
+        private WebDriver driver;
+        private Duck duck;
 
 
         @BeforeMethod
         public void setUp() {
                 driver = new ChromeDriver();
-                ChromeOptions Options;
-                Options = new ChromeOptions();
-                Options.enableBiDi().setPageLoadStrategy(PageLoadStrategy.NORMAL).addArguments("--start-maximized").setImplicitWaitTimeout(Duration.ofSeconds(5));
+                ChromeOptions Options = new ChromeOptions();
+                Options.setPageLoadStrategy(PageLoadStrategy.NORMAL).addArguments("--start-maximized").setImplicitWaitTimeout(Duration.ofSeconds(10));
+                duck = new Duck(driver);
         }
 
         @AfterMethod
@@ -33,40 +35,106 @@ public class WorkshopTests {
         }
 
         @Test
-        public void test1() {
-                driver.navigate().to("https://duckduckgo.com/");
-                driver.getTitle();
-                Assert.assertEquals(driver.getTitle(), "Google");
-
+        public void pageTitle() {
+                duck.navigate();
+                String title =  driver.getTitle();
+                Assert.assertEquals(title, "Google");
         }
 
         @Test
-        public void test2() {
-                driver.navigate().to("https://duckduckgo.com/");
-//                wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-                var logo = driver.findElement(By.xpath("//img[@src='data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMTg5IDUzIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxwYXRoIGZpbGw9IiMzMzMiIGQ9Ik0xMTAuMDQ1IDI0LjIyNGgtMi40MDVsLTQuMzc4IDQuNTAydi05LjAwM2gtMS44NXYxNS4zNTRoMS44NXYtNS4wNTZsNC45OTUgNC45OTQuMDYxLjA2MmgyLjIydi0uMTg1bC01LjYxMS01LjU1em0tMTEuODk4IDguMjIzYy0uNjc5LjY3OC0xLjY2NiAxLjA0OC0yLjc3NSAxLjA0OC0xLjkxMiAwLTMuODI0LTEuMTcyLTMuODI0LTMuODg1IDAtMi4yODEgMS42MDQtMy44ODUgMy44MjQtMy44ODUuOTg2IDAgMS45MTEuMzcgMi42NTEgMS4wNDlsLjA2Mi4wNjEgMS4xNzEtMS4yMzMtLjA2MS0uMDYyQzk4LjA4NSAyNC40OTIgOTYuNzkgMjQgOTUuMzEgMjRjLTMuMzkyIDAtNS42NzMgMi4yODEtNS42NzMgNS42MTEgMCAzLjg4NSAyLjgzNiA1LjYxMiA1LjY3MyA1LjYxMmguMDYyYzEuNDggMCAyLjg5OC0uNTU1IDMuODg0LTEuNjA0bC4wNjItLjA2MS0xLjIzMy0xLjIzNHptLTEyLjU4MS0yLjQwNGMwIDEuOTczLTEuMzU2IDMuNDUzLTMuMjY4IDMuNTE1LTIuMDM1IDAtMy4yNjgtMS4yMzMtMy4yNjgtMy4zM3YtNS45ODFoLTEuODV2NS45ODFjMCAzLjA4MyAxLjg1IDUuMDU3IDQuNzQ4IDUuMDU3aC4wNjJjMS40MTggMCAyLjcxMy0uNjc5IDMuNTc2LTEuNzI3bC4wNjItLjEyMy4wNjIgMS42NjVoMS43MjZWMjQuMjQ3aC0xLjg1ek02Ny4yOTggMTkuNjZoLTUuNjEydjE1LjQxN2g1LjYxMmM1LjM2NSAwIDcuNzA4LTMuOTQ3IDcuNzA4LTcuODMyIDAtMy42MzgtMi40MDUtNy41ODUtNy43MDgtNy41ODV6bTUuNzk2IDcuNTI0YzAgMi45Ni0xLjc4OCA1LjkyLTUuNzM1IDUuOTJoLTMuN1YyMS41NzFoMy42MzljMy45NDYgMCA1Ljc5NiAyLjg5OCA1Ljc5NiA1LjYxMnptOTYuMDE4IDEuMTdoNC43NDh2My41NzdjLTEuMTcxLjk4Ni0yLjU5IDEuNTQxLTQuMTMxIDEuNTQxLTQuMTkzIDAtNi4xMDUtMy4wMjEtNi4xMDUtNS45ODEgMC0zLjAyMiAxLjkxMi02LjI5IDYuMDQzLTYuMjkgMS42NjUgMCAzLjIwNy42MTcgNC40NCAxLjcyN2wuMDYyLjA2MSAxLjExLTEuMjk1LS4wNjItLjA2MWMtMS40OC0xLjQ4LTMuNDUzLTIuMjItNS42MTEtMi4yMi0yLjM0NCAwLTQuMzE3Ljc0LTUuNzM1IDIuMjItMS40OCAxLjQ4LTIuMjgyIDMuNTc2LTIuMjIgNS45MiAwIDMuNjM4IDIuMDk2IDcuODMxIDguMDE2IDcuODMxaC4xMjRhNy43MTYgNy43MTYgMCAwIDAgNS43OTYtMi41OVYyNi42OWgtNi41MzZ2MS42NjV6bS01MS4xODEtOC42OTRoLTUuNjEydjE1LjQxN2g1LjYxMmM1LjM2NSAwIDcuNzA4LTMuOTQ3IDcuNzA4LTcuODMyIDAtMy42MzgtMi40MDUtNy41ODQtNy43MDgtNy41ODR6bTUuNzk2IDcuNTI0YzAgMi45Ni0xLjc4OCA1LjkyLTUuNzM1IDUuOTJoLTMuNjM4VjIxLjU3MmgzLjYzOGMzLjg4NSAwIDUuNzM1IDIuODk4IDUuNzM1IDUuNjEyem01OS40NjMtMy4xODVjLTMuMjY5IDAtNS42MTIgMi40MDUtNS42MTIgNS42NzMgMCAzLjI2OCAyLjM0MyA1LjYxMSA1LjYxMiA1LjYxMSAzLjI2OCAwIDUuNjczLTIuMzQzIDUuNjczLTUuNjExIDAtMy4zMy0yLjM0My01LjY3My01LjY3My01LjY3M3ptMy44MjMgNS42NzNjMCAyLjI4Mi0xLjYwMyAzLjg4NS0zLjgyMyAzLjg4NS0yLjE1OSAwLTMuNzYyLTEuNjAzLTMuNzYyLTMuODg1IDAtMi4zNDMgMS41NDItNC4wMDggMy44MjMtNC4wMDggMi4xNTkuMDYxIDMuNzYyIDEuNzI2IDMuNzYyIDQuMDA4em0tNTAuODE0LjM3MWMwIDEuOTczLTEuMzU2IDMuNDUzLTMuMjY4IDMuNTE1LTIuMDM1IDAtMy4yNjgtMS4yMzMtMy4yNjgtMy4zM3YtNS45ODFoLTEuODV2NS45ODFjMCAzLjA4MyAxLjg1IDUuMDU3IDQuNjg2IDUuMDU3aC4wNjJjMS40MTggMCAyLjcxMy0uNjc5IDMuNTc2LTEuNzI3bC4wNjItLjEyMy4wNjIgMS42NjVoMS43MjZWMjQuMjQ3aC0xLjg1djUuNzk2em0xMi41OCAyLjQwNGMtLjY3OC42NzgtMS42NjUgMS4wNDgtMi43NzUgMS4wNDgtMS45MTEgMC0zLjgyMy0xLjE3Mi0zLjgyMy0zLjg4NSAwLTIuMjgxIDEuNjAzLTMuODg1IDMuODIzLTMuODg1Ljk4NyAwIDEuOTEyLjM3IDIuNjUyIDEuMDQ5bC4wNjIuMDYxIDEuMTcxLTEuMjMzLS4wNjEtLjA2MmMtMS4xMS0xLjA0OC0yLjQwNS0xLjU0MS0zLjg4NS0xLjU0MS0zLjM5MiAwLTUuNjczIDIuMjgxLTUuNjczIDUuNjExIDAgMy44ODUgMi44MzYgNS42MTIgNS42NzMgNS42MTJoLjA2MWMxLjQ4IDAgMi44OTktLjU1NSAzLjg4NS0xLjYwNGwuMDYyLS4wNjEtMS4yMzMtMS4yMzR6bTExLjg5OS04LjIyM2gtMi40MDVsLTQuMzc4IDQuNTAydi05LjAwM2gtMS44NXYxNS4zNTRoMS44NXYtNS4wNTZsNC45OTQgNC45OTQuMDYyLjA2MmgyLjIydi0uMTg1bC01LjYxMS01LjU1eiIvPgogIDxwYXRoIGZpbGw9IiNkZTU4MzMiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTI2LjUgNTNDNDEuMTM2IDUzIDUzIDQxLjEzNiA1MyAyNi41UzQxLjEzNiAwIDI2LjUgMCAwIDExLjg2NCAwIDI2LjUgMTEuODY0IDUzIDI2LjUgNTN6IiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz4KICA8cGF0aCBmaWxsPSIjZGRkIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zMC4yMjcgNDYuMjcyYzAtLjIwNy4wNS0uMjU1LS42MDgtMS41NjYtMS43NDktMy41MDMtMy41MDctOC40NC0yLjcwNy0xMS42MjUuMTQ2LS41NzktMS42NDgtMjEuNDI1LTIuOTE1LTIyLjA5Ny0xLjQxLS43NS0zLjE0My0xLjk0Mi00LjcyOC0yLjIwNy0uODA1LS4xMjgtMS44Ni0uMDY3LTIuNjg0LjA0NC0uMTQ3LjAyLS4xNTMuMjgzLS4wMTMuMzMuNTQyLjE4NCAxLjIuNTAyIDEuNTg3Ljk4NC4wNzMuMDktLjAyNi4yMzQtLjE0Mi4yMzktLjM2Ni4wMTMtMS4wMjguMTY2LTEuOTAyLjkwOC0uMTAxLjA4Ni0uMDE3LjI0Ni4xMTMuMjIgMS44NzgtLjM3MiAzLjc5Ny0uMTg5IDQuOTI3Ljg0LjA3My4wNjYuMDM1LjE4NS0uMDYuMjExLTkuODExIDIuNjY3LTcuODcgMTEuMi01LjI1NyAyMS42NzQgMi4yMTMgOC44NzUgMy4xMTMgMTIuMDI4IDMuNDMzIDEzLjEwM2EuNjA2LjYwNiAwIDAgMCAuMzY2LjM5OGMzLjQzOCAxLjI5IDEwLjU5IDEuMzE2IDEwLjU5LS45Mzl6IiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz4KICA8cGF0aCBmaWxsPSIjZmZmIiBkPSJNMzEuNTcyIDQ4LjIzOGMtMS4xOS40NjYtMy41Mi42NzMtNC44NjUuNjczLTEuOTczIDAtNC44MTQtLjMxLTUuODQ5LS43NzYtLjYzOS0xLjk2OC0yLjU1Mi04LjA2Ni00LjQ0Mi0xNS44MTEtLjA2MS0uMjU0LS4xMjMtLjUwNi0uMTg1LS43NTdsLS4wMDEtLjAwNmMtMi4yNDYtOS4xNzQtNC4wOC0xNi42NjcgNS45NzQtMTkuMDIxLjA5MS0uMDIyLjEzNi0uMTMxLjA3Ni0uMjA0LTEuMTU0LTEuMzY4LTMuMzE1LTEuODE3LTYuMDQ4LS44NzQtLjExMi4wMzktLjIwOS0uMDc0LS4xNC0uMTcuNTM2LS43MzkgMS41ODQtMS4zMDcgMi4xLTEuNTU2LjEwNy0uMDUxLjEwMS0uMjA4LS4wMTItLjI0M2ExMS41NCAxMS41NCAwIDAgMC0xLjU2Mi0uMzcyYy0uMTUzLS4wMjUtLjE2Ny0uMjg4LS4wMTMtLjMwOSAzLjg3NC0uNTIgNy45Mi42NDIgOS45NSAzLjIuMDE4LjAyNC4wNDYuMDQuMDc2LjA0NyA3LjQzNCAxLjU5NiA3Ljk2NiAxMy4zNDcgNy4xMSAxMy44ODItLjE3LjEwNi0uNzEuMDQ1LTEuNDI0LS4wMzUtMi44OTMtLjMyMy04LjYyLS45NjQtMy44OTMgNy44NDYuMDQ3LjA4Ny0uMDE1LjIwMi0uMTEzLjIxNy0yLjY2NS40MTUuNzUgOC43NjcgMy4yNjEgMTQuMjd6Ii8+CiAgPHBhdGggZmlsbD0iIzNjYTgyYiIgZD0iTTM0Ljg5NyAzNy41NTVjLS41NjYtLjI2My0yLjc0MiAxLjI5OC00LjE4NiAyLjQ5Ni0uMzAyLS40MjctLjg3LS43MzgtMi4xNTQtLjUxNS0xLjEyNC4xOTYtMS43NDQuNDY3LTIuMDIxLjkzNC0xLjc3My0uNjcyLTQuNzU3LTEuNzEtNS40NzgtLjcwOC0uNzg3IDEuMDk1LjE5NyA2LjI3NyAxLjI0NCA2Ljk1LjU0Ni4zNTEgMy4xNi0xLjMyOCA0LjUyNC0yLjQ4Ny4yMi4zMS41NzUuNDg4IDEuMzAzLjQ3MSAxLjEwMi0uMDI1IDIuODktLjI4MiAzLjE2Ny0uNzk1YS41NjkuNTY5IDAgMCAwIC4wNDQtLjExYzEuNDAzLjUyNCAzLjg3MSAxLjA4IDQuNDIzLjk5NiAxLjQzNy0uMjE2LS4yLTYuOTI0LS44NjYtNy4yMzJ6Ii8+CiAgPHBhdGggZmlsbD0iIzRjYmEzYyIgZD0iTTMwLjg0NCA0MC4yMDRjLjA2LjEwNi4xMDcuMjE4LjE0OC4zMzIuMi41Ni41MjUgMi4zMzguMjggMi43NzgtLjI0Ny40MzktMS44NDcuNjUxLTIuODM1LjY2OHMtMS4yMDktLjM0NC0xLjQwOS0uOTAzYy0uMTYtLjQ0Ny0uMjM4LTEuNS0uMjM3LTIuMTAxLS4wNC0uODk0LjI4Ni0xLjIwOCAxLjc5NS0xLjQ1MiAxLjExNi0uMTggMS43MDcuMDMgMi4wNDcuMzkgMS41ODUtMS4xODQgNC4yMy0yLjg1MyA0LjQ4OC0yLjU0OCAxLjI4NiAxLjUyMSAxLjQ0OCA1LjE0MyAxLjE3IDYuNi0uMDkxLjQ3Ni00LjM1LS40NzItNC4zNS0uOTg2IDAtMi4xMzMtLjU1My0yLjcxOC0xLjA5Ny0yLjc3OHptLTkuMzI5LS42NjZjLjM0OS0uNTUyIDMuMTc3LjEzNSA0LjczLjgyNSAwIDAtLjMyIDEuNDQ2LjE4OSAzLjE0OS4xNDguNDk4LTMuNTcyIDIuNzE1LTQuMDU4IDIuMzM0LS41NjEtLjQ0MS0xLjU5NC01LjE0OC0uODYxLTYuMzA4eiIvPgogIDxwYXRoIGZpbGw9IiNmYzMiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTIyLjg4NSAyOC4zMjVjLjIyOC0uOTk1IDEuMjk1LTIuODcgNS4xMDEtMi44MjUgMS45MjUtLjAwOCA0LjMxNS0uMDAxIDUuOS0uMTgxYTIxLjIxMiAyMS4yMTIgMCAwIDAgNS4yNy0xLjI4MmMxLjY0OC0uNjI4IDIuMjMzLS40ODggMi40MzgtLjExMi4yMjUuNDEzLS4wNCAxLjEyNy0uNjE2IDEuNzg0LTEuMSAxLjI1NS0zLjA3NyAyLjIyOC02LjU3IDIuNTE2cy01LjgwNS0uNjQ4LTYuOC44NzdjLS40My42NTgtLjA5OCAyLjIwOCAzLjI3OSAyLjY5NiA0LjU2My42NTkgOC4zMTEtLjc5MyA4Ljc3NC4wODQuNDYzLjg3Ny0yLjIwNCAyLjY2MS02Ljc3NSAyLjY5OC00LjU3LjAzOC03LjQyNi0xLjYtOC40MzgtMi40MTQtMS4yODUtMS4wMzMtMS44Ni0yLjUzOS0xLjU2My0zLjg0MXoiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPgogIDxnIGZpbGw9IiMxNDMwN2UiIG9wYWNpdHk9Ii44Ij4KICAgIDxwYXRoIGQ9Ik0yOC43MDYgMTcuNDQzYy4yNTUtLjQxNy44Mi0uNzQgMS43NDUtLjc0czEuMzYuMzY5IDEuNjYyLjc4Yy4wNjEuMDgzLS4wMzIuMTgxLS4xMjcuMTRsLS4wNy0uMDNjLS4zMzgtLjE0OC0uNzUzLS4zMy0xLjQ2NS0uMzQtLjc2MS0uMDEtMS4yNDEuMTgtMS41NDQuMzQ0LS4xMDEuMDU2LS4yNjItLjA1NS0uMjAxLS4xNTR6bS0xMC40MTYuNTM0Yy44OTgtLjM3NSAxLjYwNC0uMzI3IDIuMTAzLS4yMDguMTA1LjAyNC4xNzgtLjA4OS4wOTQtLjE1Ni0uMzg3LS4zMTMtMS4yNTQtLjctMi4zODUtLjI4LTEuMDEuMzc3LTEuNDg1IDEuMTU5LTEuNDg3IDEuNjcyLS4wMDEuMTIyLjI0OC4xMzIuMzEyLjAzLjE3NC0uMjc4LjQ2NC0uNjgyIDEuMzYyLTEuMDU4eiIvPgogICAgPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMzEuMjM3IDIzLjE1NGMtLjc5NCAwLTEuNDM4LS42NDItMS40MzgtMS40MzNzLjY0NC0xLjQzMyAxLjQzOC0xLjQzM2MuNzk0IDAgMS40MzguNjQyIDEuNDM4IDEuNDMzcy0uNjQ0IDEuNDMzLTEuNDM4IDEuNDMzem0xLjAxMy0xLjkwOGEuMzcyLjM3MiAwIDAgMC0uNzQ1IDAgLjM3Mi4zNzIgMCAwIDAgLjc0NSAwem0tMTAuNTQ0IDEuNDY3YzAgLjkyMy0uNzUgMS42NzEtMS42NzYgMS42NzFhMS42NzUgMS42NzUgMCAwIDEtMS42NzctMS42N2MwLS45MjQuNzUyLTEuNjcyIDEuNjc3LTEuNjcyLjkyNCAwIDEuNjc2Ljc0OCAxLjY3NiAxLjY3MXptLS40OTQtLjU1NGEuNDM0LjQzNCAwIDEgMC0uODY3LjAwMi40MzQuNDM0IDAgMCAwIC44NjctLjAwMnoiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPgogIDwvZz4KICA8cGF0aCBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yNi41IDQ4Ljc1NmMxMi4yOTIgMCAyMi4yNTYtOS45NjQgMjIuMjU2LTIyLjI1NlMzOC43OTIgNC4yNDQgMjYuNSA0LjI0NCA0LjI0NCAxNC4yMDggNC4yNDQgMjYuNSAxNC4yMDggNDguNzU2IDI2LjUgNDguNzU2em0wIDIuMDdjMTMuNDM1IDAgMjQuMzI2LTEwLjg5MSAyNC4zMjYtMjQuMzI2UzM5LjkzNSAyLjE3NCAyNi41IDIuMTc0IDIuMTc0IDEzLjA2NSAyLjE3NCAyNi41IDEzLjA2NSA1MC44MjYgMjYuNSA1MC44MjZ6IiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz4KICA8cGF0aCBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yNi40OTcgNDguNDM4YzEyLjExOCAwIDIxLjk0MS05LjgyMyAyMS45NDEtMjEuOTRTMzguNjE1IDQuNTU1IDI2LjQ5OCA0LjU1NSA0LjU1NSAxNC4zOCA0LjU1NSAyNi40OTdzOS44MjQgMjEuOTQxIDIxLjk0MSAyMS45NDF6bTI0LjI5Mi0yMS45NGMwIDEzLjQxNS0xMC44NzYgMjQuMjktMjQuMjkyIDI0LjI5UzIuMjA2IDM5LjkxNCAyLjIwNiAyNi40OTkgMTMuMDggMi4yMDUgMjYuNDk3IDIuMjA1IDUwLjc5IDEzLjA4IDUwLjc5IDI2LjQ5N3oiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPgo8L3N2Zz4K']"));
-//                wait.until(d -> logo.isDisplayed());
-                Assert.assertTrue(logo.isDisplayed());
+        public void logoIsDisplayed() {
+                duck.navigate();
 
-//                wait = new FluentWait<>(driver)
-//                        .withTimeout(Duration.ofSeconds(5))
-//                        .pollingEvery(Duration.ofMillis(200))
-//                        .ignoring(InvalidElementStateException.class)
-//                        .ignoring(NotFoundException.class);
-//                wait.until(
-//                        d -> {
-//                                logo.isDisplayed();
-//                                return true;
-//                        });
+                String logo = driver.findElement(By.xpath("(//a[@title='Learn about DuckDuckGo']/img)[2]")).getDomAttribute("src");
+                assert logo != null;
         }
 
         @Test
-        public void test3() {
-                driver.navigate().to("https://duckduckgo.com/");
+        public void linkOfFirstResult() {
+                duck.navigate();
                 var searchBox = driver.findElement(By.xpath("//input[@id='searchbox_input']"));
                 searchBox.sendKeys("Selenium WebDriver");
                 driver.findElement(By.xpath("//button[@class='iconButton_button__A_Uiu searchbox_searchButton__LxebD']")).click();
-                var searchResults = driver.findElement(By.xpath("//a[@href='https://www.selenium.dev/documentation/webdriver/'][1]")).getDomAttribute("href");
-                Assert.assertEquals(searchResults,"https://www.selenium.dev/documentation/webdriver/");
+                var ResultOne = driver.findElement(By.xpath("(//a[@data-testid='result-title-a'])[1]")).getDomAttribute("href");
+                Assert.assertEquals(ResultOne,"https://www.selenium.dev/documentation/webdriver/");
         }
+        @Test
+        public void secondResultContains() {
+                duck.navigate();
+                var searchBox = driver.findElement(By.xpath("//input[@id='searchbox_input']"));
+                searchBox.sendKeys("Cucumber IO");
+                driver.findElement(By.xpath("//button[@aria-label='Search']")).click();
+                var searchResult = driver.findElement(By.xpath("(//a[@data-testid='result-extras-url-link'])[2]")).getDomAttribute("href");
+                assert searchResult != null;
+                Assert.assertTrue(searchResult.contains("https://www.linkedin.com"));
+        }
+
+
+//        @Test
+//        public void checkbox() {
+//                driver.navigate().to("http://the-internet.herokuapp.com/checkboxes");
+//                driver.findElement(By.xpath("//input[@type = 'checkbox'][1]")).click();
+//                //couldn't find a way to locate the first checkbox uniquely is this the right way to do it?
+//                Assert.assertTrue(driver.findElement(By.xpath("//input[1]")).isSelected());
+//                Assert.assertTrue(driver.findElement(By.xpath("//input[2]")).isSelected());
+//                // couldn't find a way to check if the checkbox is checked is this correct ?
+//
+//        }
+
+//        @Test
+//        public void countryForCompany() {
+//                Wait<WebDriver> wait;
+//                wait = new FluentWait<>(driver)
+//                        .withTimeout(Duration.ofSeconds(5))
+//                        .pollingEvery(Duration.ofMillis(100))
+//                        .ignoring(InvalidElementStateException.class)
+//                        .ignoring(StaleElementReferenceException.class)
+//                        .ignoring(NotFoundException.class);
+//                driver.navigate().to("https://www.w3schools.com/html/html_tables.asp");
+//                var country = driver.findElement(By.xpath("//tr[contains(.,'Ernst Handel')]/td[3]")).getText();
+//                Assert.assertEquals(country, "Austria");
+//
+//        }
+
+//        @Test
+//        public void uploadFile() {
+//                driver.navigate().to("http://the-internet.herokuapp.com/upload");
+//                Wait<WebDriver> wait;
+//                wait = new FluentWait<>(driver)
+//                        .withTimeout(Duration.ofSeconds(10))
+//                        .pollingEvery(Duration.ofMillis(100))
+//                        .ignoring(InvalidElementStateException.class)
+//                        .ignoring(StaleElementReferenceException.class)
+//                        .ignoring(NotFoundException.class);
+//                WebElement upload = driver.findElement(By.xpath("//input[@id='file-upload']"));
+//                upload.click();
+//                upload.sendKeys("D:\\Test attachments\\test photos\\New folder.2.png");
+//
+//                      driver.findElement(By.xpath("//div[@id='drag-drop-upload']")).click();
+//                      driver.findElement(By.xpath("//div[@id='drag-drop-upload']")).sendKeys("D:/Test attachments/test photos/New folder.png");
+//
+//        }
+//        @Test
+//        public void drag() {
+//                driver.navigate().to("https://jqueryui.com/resources/demos/droppable/default.html");
+//                WebElement fromElement = driver.findElement(By.xpath("//div[@id='draggable']"));
+//                WebElement toElement = driver.findElement(By.xpath("//div[@id='droppable']"));
+//                Actions dragAndDrop = new Actions(driver);
+//                dragAndDrop.clickAndHold(fromElement);
+//                dragAndDrop.moveToElement(toElement);
+//                dragAndDrop.release(toElement);
+//                dragAndDrop.build();
+//                dragAndDrop.perform();
+//                Wait<WebDriver> wait;
+//                wait = new FluentWait<>(driver)
+//                        .withTimeout(Duration.ofSeconds(10))
+//                        .pollingEvery(Duration.ofMillis(100))
+//                        .ignoring(InvalidElementStateException.class)
+//                        .ignoring(StaleElementReferenceException.class)
+//                        .ignoring(NotFoundException.class);
+//                String text = driver.findElement(By.xpath("//div[@id='droppable']")).getText();
+//                Assert.assertEquals(text, "Dropped!");
+//
+//
+//        }
 }
